@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f0f1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Control de finanzas personales - Gestiona tus ingresos y gastos">
+  
+  <title>Control de Finanzas</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="./manifest.json">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <h1 class="app-title">💰 Finanzas</h1>
+        <div class="month-selector">
+          <button id="prevMonth" aria-label="Mes anterior">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <span id="currentMonth" class="current-month">Diciembre 2025</span>
+          <button id="nextMonth" aria-label="Mes siguiente">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Dashboard View -->
+      <section id="dashboardView" class="view-section active">
+        <!-- Balance Cards -->
+        <div class="balance-grid">
+          <div class="balance-card income">
+            <div class="balance-label">Ingresos</div>
+            <div class="balance-amount">€0,00</div>
+          </div>
+          <div class="balance-card expense">
+            <div class="balance-label">Gastos</div>
+            <div class="balance-amount">€0,00</div>
+          </div>
+          <div class="balance-card total positive">
+            <div class="balance-label">Balance</div>
+            <div class="balance-amount">€0,00</div>
+          </div>
+        </div>
+        
+        <!-- Charts -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Evolución</h2>
+          </div>
+          
+          <div class="chart-tabs">
+            <button class="chart-tab active" data-chart="bar">Ingresos vs Gastos</button>
+            <button class="chart-tab" data-chart="pie">Por Categoría</button>
+            <button class="chart-tab" data-chart="line">Balance</button>
+          </div>
+          
+          <div id="barPanel" class="chart-panel">
+            <div class="chart-container">
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+          
+          <div id="piePanel" class="chart-panel hidden">
+            <div class="chart-container">
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+          
+          <div id="linePanel" class="chart-panel hidden">
+            <div class="chart-container">
+              <canvas id="lineChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Summary -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Gastos por Categoría</h2>
+          </div>
+          <div id="dashboardSummary"></div>
+        </div>
+
+        <!-- Export/Import -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Datos</h2>
+          </div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button id="exportData" class="btn btn-outline btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Exportar JSON
+            </button>
+            <button id="importData" class="btn btn-outline btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              Importar JSON
+            </button>
+            <input type="file" id="importFile" accept=".json" style="display: none;">
+          </div>
+        </div>
+      </section>
+      
+      <!-- Ingresos View -->
+      <section id="ingresosView" class="view-section">
+        <div class="flex-between mb-md">
+          <h2 class="card-title">Ingresos del Mes</h2>
+          <button id="addIngreso" class="btn btn-income btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Añadir
+          </button>
+        </div>
+        <div id="ingresosList"></div>
+      </section>
+      
+      <!-- Gastos Fijos View -->
+      <section id="gastosFijosView" class="view-section">
+        <div class="flex-between mb-md">
+          <div>
+            <h2 class="card-title">Gastos Fijos</h2>
+            <p class="card-subtitle">Se repiten cada mes automáticamente</p>
+          </div>
+          <button id="addGastoFijo" class="btn btn-expense btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Añadir
+          </button>
+        </div>
+        <div class="card" style="margin-bottom: 16px; padding: 12px 16px;">
+          <p class="text-muted" style="font-size: 0.875rem;">
+            💡 Usa el interruptor para activar o desactivar un gasto fijo solo para este mes.
+          </p>
+        </div>
+        <div id="gastosFijosList"></div>
+      </section>
+      
+      <!-- Gastos Variables View -->
+      <section id="gastosVariablesView" class="view-section">
+        <div class="flex-between mb-md">
+          <h2 class="card-title">Gastos Variables</h2>
+          <button id="addGastoVariable" class="btn btn-expense btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Añadir
+          </button>
+        </div>
+        <div id="gastosVariablesList"></div>
+      </section>
+      
+      <!-- Categorías View -->
+      <section id="categoriasView" class="view-section">
+        <div class="flex-between mb-md">
+          <h2 class="card-title">Categorías</h2>
+          <button id="addCategoria" class="btn btn-primary btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Nueva
+          </button>
+        </div>
+        <div id="categoriasList"></div>
+      </section>
+      
+    </main>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <div class="nav-items">
+        <a href="#" class="nav-item active" data-view="dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+          </svg>
+          <span>Inicio</span>
+        </a>
+        <a href="#" class="nav-item" data-view="ingresos">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Ingresos</span>
+        </a>
+        <a href="#" class="nav-item" data-view="gastosFijos">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <span>Fijos</span>
+        </a>
+        <a href="#" class="nav-item" data-view="gastosVariables">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span>Variables</span>
+        </a>
+        <a href="#" class="nav-item" data-view="categorias">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+          </svg>
+          <span>Categorías</span>
+        </a>
+      </div>
+    </nav>
+    
+    <!-- FAB -->
+    <button id="fab" class="fab btn btn-primary" aria-label="Añadir gasto rápido">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+    </button>
+    
+  </div>
+  
+  <!-- Modal Overlay -->
+  <div id="modalOverlay" class="modal-overlay">
+    
+    <!-- Modal Ingreso -->
+    <div id="modalIngreso" class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Nuevo Ingreso</h3>
+        <button class="modal-close" aria-label="Cerrar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form id="formIngreso">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="ingresoFecha">Fecha</label>
+            <input type="date" id="ingresoFecha" name="fecha" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ingresoDescripcion">Descripción</label>
+            <input type="text" id="ingresoDescripcion" name="descripcion" class="form-input" placeholder="Ej: Salario, Freelance..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ingresoCantidad">Cantidad</label>
+            <div class="amount-input-group">
+              <span class="currency-symbol">€</span>
+              <input type="number" id="ingresoCantidad" name="cantidad" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ingresoCategoria">Categoría</label>
+            <select id="ingresoCategoria" name="categoria" class="form-select">
+              <option value="">Seleccionar categoría...</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close">Cancelar</button>
+          <button type="submit" class="btn btn-income">Guardar</button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Modal Gasto Fijo -->
+    <div id="modalGastoFijo" class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Nuevo Gasto Fijo</h3>
+        <button class="modal-close" aria-label="Cerrar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form id="formGastoFijo">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="gastoFijoDescripcion">Descripción</label>
+            <input type="text" id="gastoFijoDescripcion" name="descripcion" class="form-input" placeholder="Ej: Alquiler, Netflix..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="gastoFijoCantidad">Cantidad mensual</label>
+            <div class="amount-input-group">
+              <span class="currency-symbol">€</span>
+              <input type="number" id="gastoFijoCantidad" name="cantidad" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="gastoFijoCategoria">Categoría</label>
+            <select id="gastoFijoCategoria" name="categoria" class="form-select">
+              <option value="">Seleccionar categoría...</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close">Cancelar</button>
+          <button type="submit" class="btn btn-expense">Guardar</button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Modal Gasto Variable -->
+    <div id="modalGastoVariable" class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Nuevo Gasto Variable</h3>
+        <button class="modal-close" aria-label="Cerrar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form id="formGastoVariable">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="gastoVariableFecha">Fecha</label>
+            <input type="date" id="gastoVariableFecha" name="fecha" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="gastoVariableDescripcion">Descripción</label>
+            <input type="text" id="gastoVariableDescripcion" name="descripcion" class="form-input" placeholder="Ej: Supermercado, Cena..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="gastoVariableCantidad">Cantidad</label>
+            <div class="amount-input-group">
+              <span class="currency-symbol">€</span>
+              <input type="number" id="gastoVariableCantidad" name="cantidad" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="gastoVariableCategoria">Categoría</label>
+            <select id="gastoVariableCategoria" name="categoria" class="form-select">
+              <option value="">Seleccionar categoría...</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close">Cancelar</button>
+          <button type="submit" class="btn btn-expense">Guardar</button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Modal Categoría -->
+    <div id="modalCategoria" class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Nueva Categoría</h3>
+        <button class="modal-close" aria-label="Cerrar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form id="formCategoria">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="categoriaNombre">Nombre</label>
+            <input type="text" id="categoriaNombre" name="nombre" class="form-input" placeholder="Ej: Alimentación, Transporte..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="categoriaTipo">Tipo</label>
+            <select id="categoriaTipo" name="tipo" class="form-select" required>
+              <option value="">Seleccionar tipo...</option>
+              <option value="ingreso">Ingreso</option>
+              <option value="gasto">Gasto</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Color</label>
+            <div id="colorPicker" class="color-picker"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+    
+  </div>
+  
+  <!-- Scripts -->
+  <script src="./js/storage.js"></script>
+  <script src="./js/categories.js"></script>
+  <script src="./js/transactions.js"></script>
+  <script src="./js/balance.js"></script>
+  <script src="./js/charts.js"></script>
+  <script src="./js/app.js"></script>
+  
+</body>
+</html>
