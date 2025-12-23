@@ -139,6 +139,7 @@ const Charts = {
                     legend: {
                         position: 'bottom',
                         labels: {
+                            color: 'rgba(255, 255, 255, 0.9)',
                             padding: 15,
                             usePointStyle: true,
                             pointStyle: 'circle',
