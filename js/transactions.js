@@ -4,259 +4,273 @@
 
 const Transactions = {
 
-    // =====================
-    // INGRESOS
-    // =====================
+  // =====================
+  // INGRESOS
+  // =====================
 
-    /**
-     * Obtener todos los ingresos
-     */
-    getAllIngresos() {
-        return Storage.data.ingresos || [];
-    },
+  /**
+   * Obtener todos los ingresos
+   */
+  getAllIngresos() {
+    return Storage.data.ingresos || [];
+  },
 
-    /**
-     * Obtener ingresos de un mes específico
-     */
-    getIngresosByMonth(month) {
-        return this.getAllIngresos().filter(i => i.fecha.startsWith(month));
-    },
+  /**
+   * Obtener ingresos de un mes específico
+   */
+  getIngresosByMonth(month) {
+    return this.getAllIngresos().filter(i => i.fecha.startsWith(month));
+  },
 
-    /**
-     * Crear nuevo ingreso
-     */
-    createIngreso(data) {
-        const ingreso = {
-            id: Storage.generateId(),
-            fecha: data.fecha,
-            descripcion: data.descripcion,
-            cantidad: parseFloat(data.cantidad),
-            categoriaId: data.categoriaId
-        };
+  /**
+   * Crear nuevo ingreso
+   */
+  createIngreso(data) {
+    const ingreso = {
+      id: Storage.generateId(),
+      fecha: data.fecha,
+      descripcion: data.descripcion,
+      cantidad: parseFloat(data.cantidad),
+      categoriaId: data.categoriaId
+    };
 
-        Storage.data.ingresos.push(ingreso);
-        Storage.save();
+    Storage.data.ingresos.push(ingreso);
+    Storage.save();
 
-        return ingreso;
-    },
+    return ingreso;
+  },
 
-    /**
-     * Actualizar ingreso
-     */
-    updateIngreso(id, updates) {
-        const index = Storage.data.ingresos.findIndex(i => i.id === id);
-        if (index !== -1) {
-            if (updates.cantidad) updates.cantidad = parseFloat(updates.cantidad);
-            Storage.data.ingresos[index] = {
-                ...Storage.data.ingresos[index],
-                ...updates
-            };
-            Storage.save();
-            return Storage.data.ingresos[index];
-        }
-        return null;
-    },
+  /**
+   * Actualizar ingreso
+   */
+  updateIngreso(id, updates) {
+    const index = Storage.data.ingresos.findIndex(i => i.id === id);
+    if (index !== -1) {
+      if (updates.cantidad) updates.cantidad = parseFloat(updates.cantidad);
+      Storage.data.ingresos[index] = {
+        ...Storage.data.ingresos[index],
+        ...updates
+      };
+      Storage.save();
+      return Storage.data.ingresos[index];
+    }
+    return null;
+  },
 
-    /**
-     * Eliminar ingreso
-     */
-    deleteIngreso(id) {
-        const index = Storage.data.ingresos.findIndex(i => i.id === id);
-        if (index !== -1) {
-            Storage.data.ingresos.splice(index, 1);
-            Storage.save();
-            return true;
-        }
-        return false;
-    },
+  /**
+   * Eliminar ingreso
+   */
+  deleteIngreso(id) {
+    const index = Storage.data.ingresos.findIndex(i => i.id === id);
+    if (index !== -1) {
+      Storage.data.ingresos.splice(index, 1);
+      Storage.save();
+      return true;
+    }
+    return false;
+  },
 
-    // =====================
-    // GASTOS FIJOS
-    // =====================
+  // =====================
+  // GASTOS FIJOS
+  // =====================
 
-    /**
-     * Obtener todos los gastos fijos
-     */
-    getAllGastosFijos() {
-        return Storage.data.gastosFijos || [];
-    },
+  /**
+   * Obtener todos los gastos fijos
+   */
+  getAllGastosFijos() {
+    return Storage.data.gastosFijos || [];
+  },
 
-    /**
-     * Crear nuevo gasto fijo
-     */
-    createGastoFijo(data) {
-        const gastoFijo = {
-            id: Storage.generateId(),
-            descripcion: data.descripcion,
-            cantidad: parseFloat(data.cantidad),
-            categoriaId: data.categoriaId,
-            activo: true
-        };
+  /**
+   * Crear nuevo gasto fijo
+   */
+  createGastoFijo(data) {
+    const gastoFijo = {
+      id: Storage.generateId(),
+      descripcion: data.descripcion,
+      cantidad: parseFloat(data.cantidad),
+      categoriaId: data.categoriaId,
+      activo: true
+    };
 
-        Storage.data.gastosFijos.push(gastoFijo);
-        Storage.save();
+    Storage.data.gastosFijos.push(gastoFijo);
+    Storage.save();
 
-        return gastoFijo;
-    },
+    return gastoFijo;
+  },
 
-    /**
-     * Actualizar gasto fijo
-     */
-    updateGastoFijo(id, updates) {
-        const index = Storage.data.gastosFijos.findIndex(g => g.id === id);
-        if (index !== -1) {
-            if (updates.cantidad) updates.cantidad = parseFloat(updates.cantidad);
-            Storage.data.gastosFijos[index] = {
-                ...Storage.data.gastosFijos[index],
-                ...updates
-            };
-            Storage.save();
-            return Storage.data.gastosFijos[index];
-        }
-        return null;
-    },
+  /**
+   * Actualizar gasto fijo
+   */
+  updateGastoFijo(id, updates) {
+    const index = Storage.data.gastosFijos.findIndex(g => g.id === id);
+    if (index !== -1) {
+      if (updates.cantidad) updates.cantidad = parseFloat(updates.cantidad);
+      Storage.data.gastosFijos[index] = {
+        ...Storage.data.gastosFijos[index],
+        ...updates
+      };
+      Storage.save();
+      return Storage.data.gastosFijos[index];
+    }
+    return null;
+  },
 
-    /**
-     * Eliminar gasto fijo
-     */
-    deleteGastoFijo(id) {
-        const index = Storage.data.gastosFijos.findIndex(g => g.id === id);
-        if (index !== -1) {
-            Storage.data.gastosFijos.splice(index, 1);
-            Storage.save();
-            return true;
-        }
-        return false;
-    },
+  /**
+   * Eliminar gasto fijo
+   */
+  deleteGastoFijo(id) {
+    const index = Storage.data.gastosFijos.findIndex(g => g.id === id);
+    if (index !== -1) {
+      Storage.data.gastosFijos.splice(index, 1);
+      Storage.save();
+      return true;
+    }
+    return false;
+  },
 
-    /**
-     * Toggle activo/inactivo de gasto fijo para un mes
-     */
-    toggleGastoFijoForMonth(gastoFijoId, month, activo) {
-        if (!Storage.data.meses[month]) {
-            Storage.data.meses[month] = {
-                gastosFijosDesactivados: [],
-                ajustes: []
-            };
-        }
+  /**
+   * Toggle activo/inactivo de gasto fijo para un mes
+   */
+  toggleGastoFijoForMonth(gastoFijoId, month, activo) {
+    if (!Storage.data.meses[month]) {
+      Storage.data.meses[month] = {
+        gastosFijosDesactivados: [],
+        ajustes: []
+      };
+    }
 
-        const mes = Storage.data.meses[month];
-        if (!mes.gastosFijosDesactivados) {
-            mes.gastosFijosDesactivados = [];
-        }
+    const mes = Storage.data.meses[month];
+    if (!mes.gastosFijosDesactivados) {
+      mes.gastosFijosDesactivados = [];
+    }
 
-        if (activo) {
-            // Activar: quitar de la lista de desactivados
-            mes.gastosFijosDesactivados = mes.gastosFijosDesactivados.filter(id => id !== gastoFijoId);
-        } else {
-            // Desactivar: añadir a la lista
-            if (!mes.gastosFijosDesactivados.includes(gastoFijoId)) {
-                mes.gastosFijosDesactivados.push(gastoFijoId);
-            }
-        }
+    if (activo) {
+      // Activar: quitar de la lista de desactivados
+      mes.gastosFijosDesactivados = mes.gastosFijosDesactivados.filter(id => id !== gastoFijoId);
+    } else {
+      // Desactivar: añadir a la lista
+      if (!mes.gastosFijosDesactivados.includes(gastoFijoId)) {
+        mes.gastosFijosDesactivados.push(gastoFijoId);
+      }
+    }
 
-        Storage.save();
-    },
+    Storage.save();
+  },
 
-    /**
-     * Verificar si un gasto fijo está activo para un mes
-     */
-    isGastoFijoActiveForMonth(gastoFijoId, month) {
-        const mes = Storage.data.meses[month];
-        if (!mes || !mes.gastosFijosDesactivados) return true;
-        return !mes.gastosFijosDesactivados.includes(gastoFijoId);
-    },
+  /**
+   * Verificar si un gasto fijo está activo para un mes
+   */
+  isGastoFijoActiveForMonth(gastoFijoId, month) {
+    const mes = Storage.data.meses[month];
+    if (!mes || !mes.gastosFijosDesactivados) return true;
+    return !mes.gastosFijosDesactivados.includes(gastoFijoId);
+  },
 
-    /**
-     * Obtener gastos fijos activos para un mes
-     */
-    getGastosFijosForMonth(month) {
-        return this.getAllGastosFijos().filter(gf =>
-            gf.activo && this.isGastoFijoActiveForMonth(gf.id, month)
-        );
-    },
+  /**
+   * Obtener gastos fijos activos para un mes
+   * Solo retorna gastos fijos si el mes es actual o futuro
+   */
+  getGastosFijosForMonth(month) {
+    const currentMonth = Storage.getCurrentMonth();
 
-    // =====================
-    // GASTOS VARIABLES
-    // =====================
+    // Solo mostrar gastos fijos para el mes actual y futuros
+    // Para meses pasados, verificar si hay alguna transacción
+    if (month < currentMonth) {
+      // Para meses pasados, solo mostrar si hubo actividad explícita
+      const mesData = Storage.data.meses[month];
+      if (!mesData) {
+        // No hay datos para este mes, no mostrar gastos fijos
+        return [];
+      }
+    }
 
-    /**
-     * Obtener todos los gastos variables
-     */
-    getAllGastosVariables() {
-        return Storage.data.gastosVariables || [];
-    },
+    return this.getAllGastosFijos().filter(gf =>
+      gf.activo && this.isGastoFijoActiveForMonth(gf.id, month)
+    );
+  },
 
-    /**
-     * Obtener gastos variables de un mes específico
-     */
-    getGastosVariablesByMonth(month) {
-        return this.getAllGastosVariables().filter(g => g.fecha.startsWith(month));
-    },
+  // =====================
+  // GASTOS VARIABLES
+  // =====================
 
-    /**
-     * Crear nuevo gasto variable
-     */
-    createGastoVariable(data) {
-        const gasto = {
-            id: Storage.generateId(),
-            fecha: data.fecha,
-            descripcion: data.descripcion,
-            cantidad: parseFloat(data.cantidad),
-            categoriaId: data.categoriaId
-        };
+  /**
+   * Obtener todos los gastos variables
+   */
+  getAllGastosVariables() {
+    return Storage.data.gastosVariables || [];
+  },
 
-        Storage.data.gastosVariables.push(gasto);
-        Storage.save();
+  /**
+   * Obtener gastos variables de un mes específico
+   */
+  getGastosVariablesByMonth(month) {
+    return this.getAllGastosVariables().filter(g => g.fecha.startsWith(month));
+  },
 
-        return gasto;
-    },
+  /**
+   * Crear nuevo gasto variable
+   */
+  createGastoVariable(data) {
+    const gasto = {
+      id: Storage.generateId(),
+      fecha: data.fecha,
+      descripcion: data.descripcion,
+      cantidad: parseFloat(data.cantidad),
+      categoriaId: data.categoriaId
+    };
 
-    /**
-     * Actualizar gasto variable
-     */
-    updateGastoVariable(id, updates) {
-        const index = Storage.data.gastosVariables.findIndex(g => g.id === id);
-        if (index !== -1) {
-            if (updates.cantidad) updates.cantidad = parseFloat(updates.cantidad);
-            Storage.data.gastosVariables[index] = {
-                ...Storage.data.gastosVariables[index],
-                ...updates
-            };
-            Storage.save();
-            return Storage.data.gastosVariables[index];
-        }
-        return null;
-    },
+    Storage.data.gastosVariables.push(gasto);
+    Storage.save();
 
-    /**
-     * Eliminar gasto variable
-     */
-    deleteGastoVariable(id) {
-        const index = Storage.data.gastosVariables.findIndex(g => g.id === id);
-        if (index !== -1) {
-            Storage.data.gastosVariables.splice(index, 1);
-            Storage.save();
-            return true;
-        }
-        return false;
-    },
+    return gasto;
+  },
 
-    // =====================
-    // RENDERIZADO
-    // =====================
+  /**
+   * Actualizar gasto variable
+   */
+  updateGastoVariable(id, updates) {
+    const index = Storage.data.gastosVariables.findIndex(g => g.id === id);
+    if (index !== -1) {
+      if (updates.cantidad) updates.cantidad = parseFloat(updates.cantidad);
+      Storage.data.gastosVariables[index] = {
+        ...Storage.data.gastosVariables[index],
+        ...updates
+      };
+      Storage.save();
+      return Storage.data.gastosVariables[index];
+    }
+    return null;
+  },
 
-    /**
-     * Renderizar lista de ingresos
-     */
-    renderIngresosList(containerId, month) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+  /**
+   * Eliminar gasto variable
+   */
+  deleteGastoVariable(id) {
+    const index = Storage.data.gastosVariables.findIndex(g => g.id === id);
+    if (index !== -1) {
+      Storage.data.gastosVariables.splice(index, 1);
+      Storage.save();
+      return true;
+    }
+    return false;
+  },
 
-        const ingresos = this.getIngresosByMonth(month);
+  // =====================
+  // RENDERIZADO
+  // =====================
 
-        if (ingresos.length === 0) {
-            container.innerHTML = `
+  /**
+   * Renderizar lista de ingresos
+   */
+  renderIngresosList(containerId, month) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const ingresos = this.getIngresosByMonth(month);
+
+    if (ingresos.length === 0) {
+      container.innerHTML = `
         <div class="empty-state">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -265,14 +279,14 @@ const Transactions = {
           <div class="empty-state-text">Añade tu primer ingreso</div>
         </div>
       `;
-            return;
-        }
+      return;
+    }
 
-        container.innerHTML = `
+    container.innerHTML = `
       <div class="transaction-list">
         ${ingresos.map(ingreso => {
-            const categoria = Categories.getById(ingreso.categoriaId);
-            return `
+      const categoria = Categories.getById(ingreso.categoriaId);
+      return `
             <div class="transaction-item" data-id="${ingreso.id}">
               <div class="transaction-icon income" style="${categoria ? `background-color: ${categoria.color}20; color: ${categoria.color}` : ''}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -298,22 +312,22 @@ const Transactions = {
               </div>
             </div>
           `;
-        }).join('')}
+    }).join('')}
       </div>
     `;
-    },
+  },
 
-    /**
-     * Renderizar lista de gastos fijos
-     */
-    renderGastosFijosList(containerId, month) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+  /**
+   * Renderizar lista de gastos fijos
+   */
+  renderGastosFijosList(containerId, month) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-        const gastosFijos = this.getAllGastosFijos().filter(gf => gf.activo);
+    const gastosFijos = this.getAllGastosFijos().filter(gf => gf.activo);
 
-        if (gastosFijos.length === 0) {
-            container.innerHTML = `
+    if (gastosFijos.length === 0) {
+      container.innerHTML = `
         <div class="empty-state">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -322,15 +336,15 @@ const Transactions = {
           <div class="empty-state-text">Añade gastos que se repiten cada mes</div>
         </div>
       `;
-            return;
-        }
+      return;
+    }
 
-        container.innerHTML = `
+    container.innerHTML = `
       <div class="transaction-list">
         ${gastosFijos.map(gasto => {
-            const categoria = Categories.getById(gasto.categoriaId);
-            const isActive = this.isGastoFijoActiveForMonth(gasto.id, month);
-            return `
+      const categoria = Categories.getById(gasto.categoriaId);
+      const isActive = this.isGastoFijoActiveForMonth(gasto.id, month);
+      return `
             <div class="transaction-item ${!isActive ? 'text-muted' : ''}" data-id="${gasto.id}">
               <div class="toggle-switch ${isActive ? 'active' : ''}" 
                    data-id="${gasto.id}" 
@@ -356,22 +370,22 @@ const Transactions = {
               </div>
             </div>
           `;
-        }).join('')}
+    }).join('')}
       </div>
     `;
-    },
+  },
 
-    /**
-     * Renderizar lista de gastos variables
-     */
-    renderGastosVariablesList(containerId, month) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+  /**
+   * Renderizar lista de gastos variables
+   */
+  renderGastosVariablesList(containerId, month) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-        const gastos = this.getGastosVariablesByMonth(month);
+    const gastos = this.getGastosVariablesByMonth(month);
 
-        if (gastos.length === 0) {
-            container.innerHTML = `
+    if (gastos.length === 0) {
+      container.innerHTML = `
         <div class="empty-state">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -380,14 +394,14 @@ const Transactions = {
           <div class="empty-state-text">Añade gastos puntuales</div>
         </div>
       `;
-            return;
-        }
+      return;
+    }
 
-        container.innerHTML = `
+    container.innerHTML = `
       <div class="transaction-list">
         ${gastos.map(gasto => {
-            const categoria = Categories.getById(gasto.categoriaId);
-            return `
+      const categoria = Categories.getById(gasto.categoriaId);
+      return `
             <div class="transaction-item" data-id="${gasto.id}">
               <div class="transaction-icon expense" style="${categoria ? `background-color: ${categoria.color}20; color: ${categoria.color}` : ''}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -413,35 +427,35 @@ const Transactions = {
               </div>
             </div>
           `;
-        }).join('')}
+    }).join('')}
       </div>
     `;
-    },
+  },
 
-    // =====================
-    // UTILIDADES
-    // =====================
+  // =====================
+  // UTILIDADES
+  // =====================
 
-    /**
-     * Formatear cantidad como moneda
-     */
-    formatCurrency(amount) {
-        return new Intl.NumberFormat('es-ES', {
-            style: 'currency',
-            currency: 'EUR'
-        }).format(amount);
-    },
+  /**
+   * Formatear cantidad como moneda
+   */
+  formatCurrency(amount) {
+    return new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount);
+  },
 
-    /**
-     * Formatear fecha
-     */
-    formatDate(dateStr) {
-        const date = new Date(dateStr);
-        return new Intl.DateTimeFormat('es-ES', {
-            day: 'numeric',
-            month: 'short'
-        }).format(date);
-    }
+  /**
+   * Formatear fecha
+   */
+  formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return new Intl.DateTimeFormat('es-ES', {
+      day: 'numeric',
+      month: 'short'
+    }).format(date);
+  }
 };
 
 // Exportar para uso global

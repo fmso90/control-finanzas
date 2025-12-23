@@ -411,11 +411,27 @@ const App = {
     },
 
     /**
-     * Menú rápido de añadir
+     * Menú rápido de añadir (FAB contextual)
      */
     showQuickAddMenu() {
-        // Por simplicidad, mostramos el modal de gasto variable (más común)
-        this.showModal('gastoVariable');
+        // Mostrar modal según la vista activa
+        switch (this.activeView) {
+            case 'ingresos':
+                this.showModal('ingreso');
+                break;
+            case 'gastosFijos':
+                this.showModal('gastoFijo');
+                break;
+            case 'gastosVariables':
+                this.showModal('gastoVariable');
+                break;
+            case 'categorias':
+                this.showModal('categoria');
+                break;
+            default:
+                // En dashboard, mostrar gasto variable (más común)
+                this.showModal('gastoVariable');
+        }
     },
 
     // =====================
@@ -510,8 +526,10 @@ const App = {
         const ingreso = Transactions.getAllIngresos().find(i => i.id === id);
         if (!ingreso) return;
 
-        this.editingItem = ingreso;
+        // Primero mostrar modal (que resetea editingItem)
         this.showModal('ingreso');
+        // Luego asignar el item a editar
+        this.editingItem = ingreso;
 
         const form = document.getElementById('formIngreso');
         if (form) {
@@ -529,8 +547,10 @@ const App = {
         const gasto = Transactions.getAllGastosFijos().find(g => g.id === id);
         if (!gasto) return;
 
-        this.editingItem = gasto;
+        // Primero mostrar modal (que resetea editingItem)
         this.showModal('gastoFijo');
+        // Luego asignar el item a editar
+        this.editingItem = gasto;
 
         const form = document.getElementById('formGastoFijo');
         if (form) {
@@ -547,8 +567,10 @@ const App = {
         const gasto = Transactions.getAllGastosVariables().find(g => g.id === id);
         if (!gasto) return;
 
-        this.editingItem = gasto;
+        // Primero mostrar modal (que resetea editingItem)
         this.showModal('gastoVariable');
+        // Luego asignar el item a editar
+        this.editingItem = gasto;
 
         const form = document.getElementById('formGastoVariable');
         if (form) {
@@ -566,8 +588,10 @@ const App = {
         const categoria = Categories.getById(id);
         if (!categoria) return;
 
-        this.editingItem = categoria;
+        // Primero mostrar modal (que resetea editingItem)
         this.showModal('categoria');
+        // Luego asignar el item a editar
+        this.editingItem = categoria;
 
         const form = document.getElementById('formCategoria');
         if (form) {
