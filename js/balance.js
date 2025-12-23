@@ -154,7 +154,7 @@ const Balance = {
                   <span class="category-dot" style="background: ${cat.color}"></span>
                   ${cat.nombre}
                 </span>
-                <span class="category-bar-amount">${Transactions.formatCurrency(cat.total)}</span>
+                <span class="category-bar-amount">${Transactions.formatCurrency(cat.total)} <span class="category-percent">(${porcentaje}%)</span></span>
               </div>
               <div class="category-bar-track">
                 <div class="category-bar-fill" style="width: ${porcentaje}%; background: ${cat.color}"></div>
@@ -170,6 +170,7 @@ const Balance = {
         .category-bar-name { display: flex; align-items: center; gap: 8px; }
         .category-dot { width: 10px; height: 10px; border-radius: 50%; }
         .category-bar-amount { font-weight: 600; }
+        .category-percent { color: rgba(255,255,255,0.5); font-weight: 400; font-size: 0.8rem; }
         .category-bar-track { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
         .category-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
       </style>
