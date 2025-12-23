@@ -145,8 +145,8 @@ const Balance = {
       <div class="category-breakdown">
         ${topCategorias.map(cat => {
             const porcentaje = datos.totalGastos > 0
-                ? Math.round((cat.total / datos.totalGastos) * 100)
-                : 0;
+                ? ((cat.total / datos.totalGastos) * 100).toFixed(2)
+                : '0.00';
             return `
             <div class="category-bar-item">
               <div class="category-bar-header">

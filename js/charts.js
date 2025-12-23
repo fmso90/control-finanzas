@@ -147,7 +147,7 @@ const Charts = {
                                 const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
                                 return data.labels.map((label, i) => {
                                     const value = data.datasets[0].data[i];
-                                    const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : '0.00';
                                     return {
                                         text: `${label} (${percentage}%)`,
                                         fillStyle: data.datasets[0].backgroundColor[i],
@@ -165,7 +165,7 @@ const Charts = {
                             label: (context) => {
                                 const value = context.raw;
                                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = Math.round((value / total) * 100);
+                                const percentage = ((value / total) * 100).toFixed(2);
                                 return ` ${context.label}: €${value.toFixed(2)} (${percentage}%)`;
                             }
                         }
