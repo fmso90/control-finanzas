@@ -36,6 +36,7 @@ const App = {
 
         // Renderizar vista inicial
         this.updateMonthDisplay();
+        this.updateUserIdDisplay();
         this.switchView('dashboard');
 
         console.log('App inicializada');
@@ -202,6 +203,49 @@ const App = {
                 }
             }
         });
+
+        // Sincronización
+        document.getElementById('copyUserId')?.addEventListener('click', () => {
+            const userId = Storage.getUserId();
+            navigator.clipboard.writeText(userId).then(() => {
+                alert('ID copiado al portapapeles');
+            }).catch(() => {
+                prompt('Copia este ID:', userId);
+            });
+        });
+
+        document.getElementById('linkDevice')?.addEventListener('click', async () => {
+            const newUserId = prompt('Introduce el ID del dispositivo a vincular:');
+            if (newUserId && newUserId.trim()) {
+                try {
+                    await Storage.setUserId(newUserId.trim());
+                    alert('Dispositivo vinculado correctamente');
+                    this.refreshCurrentView();
+                    this.updateUserIdDisplay();
+                } catch (error) {
+                    alert('Error al vincular: ' + error.message);
+                }
+            }
+        });
+
+        document.getElementById('forceSync')?.addEventListener('click', async () => {
+            try {
+                await Storage.forceSync();
+                this.refreshCurrentView();
+            } catch (error) {
+                alert('Error de sincronización: ' + error.message);
+            }
+        });
+    },
+
+    /**
+     * Actualizar display del User ID
+     */
+    updateUserIdDisplay() {
+        const display = document.getElementById('userIdDisplay');
+        if (display && Storage.userId) {
+            display.textContent = Storage.userId;
+        }
     },
 
     /**
